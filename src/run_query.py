@@ -6,7 +6,7 @@ import sys
 import argparse
 from typing import List, Dict, Any
 
-from config import validate_config
+from config import validate_config, validate_cloud_config
 from google_client.search_client import fetch_google_results
 from parsers.result_parser import categorize_results, ResultParser
 from elasticsearch_client.es_client import index_to_elastic
@@ -102,6 +102,11 @@ def main():
         action="store_true",
         help="Validate configuration and exit"
     )
+    parser.add_argument(
+        "--validate-cloud",
+        action="store_true",
+        help="Validate cloud configuration and test connection"
+    )
     
     args = parser.parse_args()
     
@@ -113,6 +118,10 @@ def main():
         
         if args.validate_config:
             return 0
+        
+        if args.validate_cloud:
+            cloud_success = validate_cloud_config()
+            return 0 if cloud_success else 1
         
         # Process the query
         success = process_query(args.query, args.pages)
