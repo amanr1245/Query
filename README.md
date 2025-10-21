@@ -1,15 +1,16 @@
 # Elasticsearch JSON Parse Codebase
 
-A backend pipeline that integrates SerpAPI (Google search results) with Elasticsearch for structured search result indexing.
+A backend pipeline that integrates SerpAPI (Google search results) with Elasticsearch for structured search result indexing. Supports both local development and Elastic Cloud serverless deployment.
 
 ## Features
 
 - Fetches search results from Google via SerpAPI with pagination
 - Categorizes results into videos and articles based on metadata
 - Structures results into clean JSON documents
-- Bulk indexes results into Elasticsearch
+- Bulk indexes results into Elasticsearch (local or cloud)
 - Command-line interface for easy usage
 - Modular architecture for easy extension
+- **Cloud-ready**: Supports Elastic Cloud serverless deployment
 
 ## Setup
 
@@ -24,14 +25,7 @@ pip install -r requirements.txt
 Copy the example environment file and fill in your credentials:
 
 ```bash
-cp .env.example .env
-```
-
-Edit `.env` with your actual values:
-
-```env
-SERPAPI_KEY=your_actual_serpapi_key
-ELASTIC_URL=http://localhost:9200
+cp env.example .env
 ```
 
 ### 3. Get SerpAPI Credentials
@@ -39,11 +33,13 @@ ELASTIC_URL=http://localhost:9200
 1. **SerpAPI Key**: Go to [SerpAPI](https://serpapi.com/)
    - Sign up for a free account
    - Get your API key from the dashboard
-   - Free tier includes 100 searches per month
+   - Free tier includes 250 searches per month
 
-### 4. Start Elasticsearch
+## Deployment Options
 
-Make sure Elasticsearch is running on your system:
+### Option A: Local Development
+
+For local development, you can use a local Elasticsearch instance:
 
 ```bash
 # Using Docker
@@ -52,22 +48,82 @@ docker run -d -p 9200:9200 -e "discovery.type=single-node" elasticsearch:8.11.0
 # Or install locally and start the service
 ```
 
+Configure your `.env` file:
+
+```env
+SERPAPI_KEY=your_actual_serpapi_key
+ELASTIC_URL=http://localhost:9200
+```
+
+### Option B: Elastic Cloud Deployment (Recommended for Production)
+
+#### 1. Create Elastic Cloud Account
+
+1. Go to [Elastic Cloud](https://cloud.elastic.co/)
+2. Sign up for a free account (14-day trial)
+3. Create a new deployment
+4. Choose "Serverless" deployment type for optimal cost efficiency
+
+#### 2. Get Your Cloud Credentials
+
+After creating your deployment, you'll need:
+
+- **Elasticsearch URL**: Found in your deployment overview
+- **API Key**: Generate from the Security section
+
+#### 3. Configure for Cloud Deployment
+
+Edit your `.env` file with cloud credentials:
+
+```env
+# SerpAPI Configuration
+SERPAPI_KEY=your_actual_serpapi_key
+
+# Elastic Cloud Configuration
+ELASTIC_URL=https://your-deployment-id.region.aws.found.io:9243
+ELASTIC_API_KEY=your_api_key_here
+```
+
+#### 4. Generate API Key (if needed)
+
+If you don't have an API key:
+
+1. Go to your Elastic Cloud deployment
+2. Navigate to **Security** → **API Keys**
+3. Click **Create API Key**
+4. Give it a name (e.g., "search-pipeline")
+5. Copy the generated key
+
+#### 5. Test Cloud Connection
+
+```bash
+# Quick validation
+python deploy_cloud.py
+
+# Or use the built-in validation
+python main.py --validate-cloud
+```
+
+This will validate your cloud configuration and test the connection.
+
+> 📖 **For detailed cloud deployment instructions, see [CLOUD_DEPLOYMENT.md](CLOUD_DEPLOYMENT.md)**
+
 ## Usage
 
 ### Basic Usage
 
 ```bash
-python src/run_query.py "machine learning tutorials"
+python main.py "machine learning tutorials"
 ```
 
 ### Advanced Usage
 
 ```bash
 # Fetch more pages (up to 10 pages)
-python src/run_query.py "biology for beginners" --pages 10
+python main.py "biology for beginners" --pages 10
 
 # Validate configuration only
-python src/run_query.py --validate-config
+python main.py --validate-config
 ```
 
 ### Example Output
@@ -94,8 +150,8 @@ Created Elasticsearch index: search_results
 Successfully indexed 10 documents to Elasticsearch
 
 ==================================================
-✅ Pipeline completed successfully!
-📊 Indexed 10 documents:
+Pipeline completed successfully!
+Indexed 10 documents:
    - 5 videos
    - 5 articles
 ```
@@ -137,8 +193,26 @@ Each indexed document contains:
 
 ### Environment Variables
 
-- `SERPAPI_KEY`: Your SerpAPI key (required)
+#### Required Variables
+- `SERPAPI_KEY`: Your SerpAPI key (required for all deployments)
+
+#### Local Deployment
 - `ELASTIC_URL`: Elasticsearch URL (default: http://localhost:9200)
+
+#### Cloud Deployment
+- `ELASTIC_URL` (cloud endpoint) + `ELASTIC_API_KEY`
+
+#### Optional Variables
+- `ELASTIC_INDEX`: Elasticsearch index name (default: search_results)
+
+### Cloud-Specific Features
+
+The pipeline automatically detects cloud deployment and:
+
+- Uses API key authentication instead of basic auth
+- Applies serverless-compatible index settings (no shard/replica configuration)
+- Implements connection retry logic for cloud reliability
+- Uses appropriate timeouts for cloud environments
 
 ### Constants (in config.py)
 
@@ -179,6 +253,36 @@ The system includes comprehensive error handling:
 - Missing field handling with defaults
 - Elasticsearch connection validation
 - Graceful degradation for partial failures
+
+## Troubleshooting
+
+### Cloud Deployment Issues
+
+#### Connection Errors
+```bash
+# Test your cloud connection
+python main.py --validate-config
+```
+
+Common issues:
+- **Invalid API Key**: Regenerate your API key in Elastic Cloud
+- **Wrong Elasticsearch URL**: Double-check your Elasticsearch URL in the deployment overview
+- **Network Issues**: Ensure your firewall allows outbound HTTPS connections
+
+#### Index Creation Issues
+- Serverless deployments automatically handle index settings
+- If you get permission errors, ensure your API key has the necessary privileges
+
+### Local Development Issues
+
+#### Elasticsearch Connection
+```bash
+# Check if Elasticsearch is running
+curl http://localhost:9200
+
+# Check cluster health
+curl http://localhost:9200/_cluster/health
+```
 
 ## Development
 
