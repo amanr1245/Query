@@ -22,7 +22,7 @@ MAX_PAGES = 5
 # Deployment mode detection
 def is_cloud_deployment():
     """Check if this is a cloud deployment based on environment variables."""
-    return bool(ELASTIC_API_KEY and ('elastic-cloud' in ELASTIC_URL or 'aws.found.io' in ELASTIC_URL or 'gcp.found.io' in ELASTIC_URL or 'azure.found.io' in ELASTIC_URL))
+    return bool(ELASTIC_API_KEY and ('elastic-cloud' in ELASTIC_URL or 'aws.found.io' in ELASTIC_URL or 'gcp.found.io' in ELASTIC_URL or 'azure.found.io' in ELASTIC_URL or 'es.' in ELASTIC_URL))
 
 # Validate required environment variables
 def validate_config():
