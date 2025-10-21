@@ -4,15 +4,35 @@ Elasticsearch client for indexing search results.
 from typing import List, Dict, Any
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk
-from config import ELASTIC_URL, ELASTIC_INDEX
+from config import ELASTIC_URL, ELASTIC_INDEX, ELASTIC_API_KEY, is_cloud_deployment
 
 
 class ElasticsearchClient:
     """Client for interacting with Elasticsearch."""
     
     def __init__(self):
-        self.es = Elasticsearch([ELASTIC_URL])
+        self.es = self._create_elasticsearch_client()
         self.index_name = ELASTIC_INDEX
+    
+    def _create_elasticsearch_client(self) -> Elasticsearch:
+        """Create Elasticsearch client with appropriate authentication."""
+        if is_cloud_deployment():
+            # Cloud deployment with API key authentication
+            return Elasticsearch(
+                [ELASTIC_URL],
+                api_key=ELASTIC_API_KEY,
+                request_timeout=30,
+                retry_on_timeout=True,
+                max_retries=3
+            )
+        else:
+            # Local deployment
+            return Elasticsearch(
+                [ELASTIC_URL],
+                request_timeout=30,
+                retry_on_timeout=True,
+                max_retries=3
+            )
     
     def test_connection(self) -> bool:
         """
@@ -51,12 +71,15 @@ class ElasticsearchClient:
                             "author": {"type": "text"},
                             "timestamp": {"type": "date"}
                         }
-                    },
-                    "settings": {
+                    }
+                }
+                
+                # Add settings only for local deployment (serverless handles this automatically)
+                if not is_cloud_deployment():
+                    mapping["settings"] = {
                         "number_of_shards": 1,
                         "number_of_replicas": 0
                     }
-                }
                 
                 self.es.indices.create(index=self.index_name, body=mapping)
                 print(f"Created Elasticsearch index: {self.index_name}")
