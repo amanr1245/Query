@@ -17,3 +17,7 @@ test_pipeline.py
 # ignore temp or output files
 test_*
 *.log
+
+# Output folder for JSONL files
+output/
+*.jsonl

@@ -69,7 +69,11 @@ class ElasticsearchClient:
                             "rank": {"type": "integer"},
                             "thumbnailUrl": {"type": "keyword"},
                             "author": {"type": "text"},
-                            "timestamp": {"type": "date"}
+                            "timestamp": {"type": "date"},
+                            "base_rank_score": {"type": "float"},
+                            "recency_score": {"type": "float"},
+                            "relevance_score": {"type": "float"},
+                            "user_engagement_score": {"type": "float"}
                         }
                     }
                 }

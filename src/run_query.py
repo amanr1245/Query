@@ -5,11 +5,13 @@ Command-line interface for running search queries and indexing results.
 import sys
 import argparse
 from typing import List, Dict, Any
+from datetime import datetime
 
 from config import validate_config, validate_cloud_config
 from google_client.search_client import fetch_google_results
 from parsers.result_parser import categorize_results, ResultParser
 from elasticsearch_client.es_client import index_to_elastic
+from scoring import RelevanceScorer
 
 
 def process_query(query: str, num_pages: int = 5) -> bool:
@@ -62,16 +64,46 @@ def process_query(query: str, num_pages: int = 5) -> bool:
         
         print(f"Created {len(structured_docs)} structured documents")
         
-        # Step 4: Index documents to Elasticsearch
-        print("Step 4: Indexing documents to Elasticsearch...")
-        success = index_to_elastic(structured_docs)
+        # Step 4: Calculate relevance scores for all documents
+        print("Step 4: Computing relevance scores...")
+        scorer = RelevanceScorer(
+            base_weight=0.6,
+            recency_weight=0.4,
+            decay_days=30,
+            default_engagement=0.5
+        )
+        
+        current_date = datetime.now()
+        scored_docs = []
+        
+        for doc in structured_docs:
+            try:
+                # Add relevance scores to the document
+                scored_doc = scorer.enrich_document(doc, current_date)
+                scored_docs.append(scored_doc)
+            except Exception as e:
+                print(f"  Warning: Could not score document (rank {doc.get('rank')}): {e}")
+                # Still add the document without scores
+                scored_docs.append(doc)
+        
+        print(f"  ✓ Computed scores for {len(scored_docs)} documents")
+        
+        # Step 5: Index documents to Elasticsearch (with scores)
+        print("Step 5: Indexing documents to Elasticsearch...")
+        success = index_to_elastic(scored_docs)
         
         if success:
             print("=" * 50)
             print("Pipeline completed successfully!")
-            print(f"Indexed {len(structured_docs)} documents:")
+            print(f"Indexed {len(scored_docs)} documents with relevance scores:")
             print(f"   - {len(videos)} videos")
             print(f"   - {len(articles)} articles")
+            print()
+            print("Score fields added to each document:")
+            print("   • base_rank_score")
+            print("   • recency_score")
+            print("   • relevance_score")
+            print("   • user_engagement_score")
             return True
         else:
             print("Failed to index documents to Elasticsearch")
