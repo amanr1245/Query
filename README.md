@@ -43,9 +43,9 @@ A complete backend pipeline that integrates SerpAPI (Google search results) with
 
 ---
 
-## Quick Start (5 Minutes)
+## Quick Start
 
-### 1. Collect Search Results (1 minute)
+### 1. Collect Search Results
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -57,13 +57,13 @@ python main.py "machine learning tutorials" --pages 5
 
 **Automatic Scoring**: When you run `main.py`, relevance scores are automatically calculated and added to all documents in Elasticsearch!
 
-### 2. Export Training Data (1 minute - optional)
+### 2. Export Training Data
 ```bash
 # Export scored documents to JSONL for ML training (optional)
 python prepare_ranking_data.py
 ```
 
-### 3. Train a Model (3 minutes - optional)
+### 3. Train a Model
 ```bash
 # Install ML dependencies
 pip install pandas scikit-learn numpy
@@ -74,8 +74,8 @@ python example_ml_training.py
 
 You now have:
 - Search results in Elasticsearch **with relevance scores automatically added**
-- Training data exported to `output/ranking_training_data.jsonl` (optional)
-- A trained ranking model (optional)
+- Training data exported to `output/ranking_training_data.jsonl`
+- A trained ranking model
 
 Check any document and you'll see:
 - `base_rank_score`
