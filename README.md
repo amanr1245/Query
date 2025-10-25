@@ -2,7 +2,7 @@
 
 A complete backend pipeline that integrates SerpAPI (Google search results) with Elasticsearch for structured search result indexing, plus a production-ready data preparation system for training machine learning ranking models. Supports both local development and Elastic Cloud serverless deployment.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#features)
 - [Quick Start (5 Minutes)](#quick-start-5-minutes)
@@ -26,20 +26,20 @@ A complete backend pipeline that integrates SerpAPI (Google search results) with
 ## Features
 
 ### Search Pipeline
-- ✅ Fetches search results from Google via SerpAPI with pagination
-- ✅ Categorizes results into videos and articles based on metadata
-- ✅ Structures results into clean JSON documents
-- ✅ Bulk indexes results into Elasticsearch (local or cloud)
-- ✅ Command-line interface for easy usage
-- ✅ **Cloud-ready**: Supports Elastic Cloud serverless deployment
+- Fetches search results from Google via SerpAPI with pagination
+- Categorizes results into videos and articles based on metadata
+- Structures results into clean JSON documents
+- Bulk indexes results into Elasticsearch (local or cloud)
+- Command-line interface for easy usage
+- **Cloud-ready**: Supports Elastic Cloud serverless deployment
 
 ### Ranking Model Data Preparation (NEW)
-- ✅ **Intelligent Relevance Scoring**: Compute scores using rank and recency heuristics
-- ✅ **Configurable Scoring System**: Adjustable weights and decay periods
-- ✅ **Elasticsearch Integration**: Updates documents with computed scores
-- ✅ **ML-Ready Export**: JSONL format for Vertex AI and other ML frameworks
-- ✅ **Production-Ready**: Comprehensive error handling and progress reporting
-- ✅ **Fully Tested**: Complete test suite with 7/7 passing tests
+- **Intelligent Relevance Scoring**: Compute scores using rank and recency heuristics
+- **Configurable Scoring System**: Adjustable weights and decay periods
+- **Elasticsearch Integration**: Updates documents with computed scores
+- **ML-Ready Export**: JSONL format for Vertex AI and other ML frameworks
+- **Production-Ready**: Comprehensive error handling and progress reporting
+- **Fully Tested**: Complete test suite with 7/7 passing tests
 
 ---
 
@@ -55,7 +55,7 @@ pip install -r requirements.txt
 python main.py "machine learning tutorials" --pages 5
 ```
 
-**✨ Automatic Scoring**: When you run `main.py`, relevance scores are automatically calculated and added to all documents in Elasticsearch!
+**Automatic Scoring**: When you run `main.py`, relevance scores are automatically calculated and added to all documents in Elasticsearch!
 
 ### 2. Export Training Data (1 minute - optional)
 ```bash
@@ -72,12 +72,12 @@ pip install pandas scikit-learn numpy
 python example_ml_training.py
 ```
 
-**Done!** You now have:
-- ✅ Search results in Elasticsearch **with relevance scores automatically added**
-- ✅ Training data exported to `output/ranking_training_data.jsonl` (optional)
-- ✅ A trained ranking model (optional)
+You now have:
+- Search results in Elasticsearch **with relevance scores automatically added**
+- Training data exported to `output/ranking_training_data.jsonl` (optional)
+- A trained ranking model (optional)
 
-**✨ The scores are now in Elasticsearch!** Check any document and you'll see:
+Check any document and you'll see:
 - `base_rank_score`
 - `recency_score`
 - `relevance_score`
@@ -189,13 +189,13 @@ Score fields added to each document:
    • user_engagement_score
 ```
 
-**✨ Note**: Relevance scores are **automatically calculated and added** when you run `main.py`. No separate step needed!
+**Note**: Relevance scores are **automatically calculated and added** when you run `main.py`. No separate step needed!
 
 ---
 
 ### Ranking Data Preparation (NEW)
 
-**✨ Automatic Scoring**: Relevance scores are now **automatically calculated when you run `main.py`**! Each document in Elasticsearch will have:
+**Automatic Scoring**: Relevance scores are now **automatically calculated when you run `main.py`**! Each document in Elasticsearch will have:
 - `base_rank_score = 1 / rank`
 - `recency_score = exp(-(current_date - timestamp) / 30_days)`
 - `relevance_score = 0.6 × base_rank_score + 0.4 × recency_score`
@@ -211,9 +211,9 @@ python prepare_ranking_data.py
 ```
 
 This will:
-- ✅ Fetch all documents from Elasticsearch (already with scores!)
-- ✅ Export to `output/ranking_training_data.jsonl` for ML training
-- ✅ Optionally recalculate scores with different parameters
+- Fetch all documents from Elasticsearch (already with scores!)
+- Export to `output/ranking_training_data.jsonl` for ML training
+- Optionally recalculate scores with different parameters
 
 **Note**: Output files are saved in the `output/` folder to keep your codebase organized.
 
@@ -398,37 +398,37 @@ model.compile(optimizer='adam', loss='mse', metrics=['mae'])
 │  Step 1: Data Collection                                     │
 │  python main.py "your query" --pages 5                       │
 │                                                              │
-│  ✓ Fetches search results from Google                       │
-│  ✓ Indexes to Elasticsearch                                 │
+│  ✓ Fetches search results from Google                        │
+│  ✓ Indexes to Elasticsearch                                  │
 └────────────────────┬─────────────────────────────────────────┘
                      │
                      ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Step 2: Data Preparation & Scoring                         │
-│  python prepare_ranking_data.py                             │
+│  Step 2: Data Preparation & Scoring                          │
+│  python prepare_ranking_data.py                              │
 │                                                              │
-│  ✓ Computes relevance scores                                │
-│  ✓ Updates Elasticsearch                                    │
-│  ✓ Exports to JSONL                                         │
+│  ✓ Computes relevance scores                                 │
+│  ✓ Updates Elasticsearch                                     │
+│  ✓ Exports to JSONL                                          │
 └────────────────────┬─────────────────────────────────────────┘
                      │
                      ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Step 3: Model Training                                     │
-│  python example_ml_training.py                              │
+│  Step 3: Model Training                                      │
+│  python example_ml_training.py                               │
 │                                                              │
-│  ✓ Trains multiple models                                   │
-│  ✓ Evaluates performance                                    │
-│  ✓ Selects best model                                       │
+│  ✓ Trains multiple models                                    │
+│  ✓ Evaluates performance                                     │
+│  ✓ Selects best model                                        │
 └────────────────────┬─────────────────────────────────────────┘
                      │
                      ▼
 ┌──────────────────────────────────────────────────────────────┐
-│  Step 4: Deployment                                         │
+│  Step 4: Deployment                                          │
 │                                                              │
-│  ✓ Deploy to production                                     │
-│  ✓ Real-time ranking predictions                            │
-│  ✓ Monitor and iterate                                      │
+│  ✓ Deploy to production                                      │
+│  ✓ Real-time ranking predictions                             │
+│  ✓ Monitor and iterate                                       │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -569,10 +569,10 @@ user_engagement_score = 0.5  # Replace with real data
 
 | Rank | Days Old | Base Score | Recency Score | Final Score | Interpretation |
 |------|----------|------------|---------------|-------------|----------------|
-| 1    | 0        | 1.000      | 1.000         | **1.000** ✨ | Perfect: Top rank, fresh |
-| 1    | 30       | 1.000      | 0.368         | **0.747** ✅ | Excellent: Top rank, month old |
-| 5    | 0        | 0.200      | 1.000         | **0.520** 🔄 | Good: Lower rank, fresh |
-| 10   | 60       | 0.100      | 0.135         | **0.114** ⚠️ | Poor: Low rank, old |
+| 1    | 0        | 1.000      | 1.000         | **1.000**   | Perfect: Top rank, fresh
+| 1    | 30       | 1.000      | 0.368         | **0.747**   | Excellent: Top rank, month old
+| 5    | 0        | 0.200      | 1.000         | **0.520**   | Good: Lower rank, fresh
+| 10   | 60       | 0.100      | 0.135         | **0.114**   | Poor: Low rank, old
 
 ### Weight Configuration Examples
 
@@ -975,30 +975,30 @@ class ElasticsearchClient:
 ## Best Practices
 
 ### Data Collection
-- ✅ Collect diverse queries (5-10 different topics)
-- ✅ Get multiple pages per query (10-20 for rich dataset)
-- ✅ Update data regularly (weekly/monthly)
-- ✅ Include different categories (videos, articles, news)
+- Collect diverse queries (5-10 different topics)
+- Get multiple pages per query (10-20 for rich dataset)
+- Update data regularly (weekly/monthly)
+- Include different categories (videos, articles, news)
 
 ### Scoring Configuration
-- ✅ Start with defaults (0.6/0.4, 30 days)
-- ✅ Adjust based on your domain (news vs. reference)
-- ✅ Validate scores before training
-- ✅ Monitor score distributions
+- Start with defaults (0.6/0.4, 30 days)
+- Adjust based on your domain (news vs. reference)
+- Validate scores before training
+- Monitor score distributions
 
 ### Model Training
-- ✅ Use at least 100+ documents for training
-- ✅ Try multiple models and compare
-- ✅ Use cross-validation
-- ✅ Monitor for overfitting
-- ✅ Keep test set separate
+- Use at least 100+ documents for training
+- Try multiple models and compare
+- Use cross-validation
+- Monitor for overfitting
+- Keep test set separate
 
 ### Production Deployment
-- ✅ Version your models
-- ✅ Monitor predictions in production
-- ✅ A/B test new versions
-- ✅ Log prediction errors
-- ✅ Retrain regularly (monthly/quarterly)
+- Version your models
+- Monitor predictions in production
+- A/B test new versions
+- Log prediction errors
+- Retrain regularly (monthly/quarterly)
 
 ---
 
@@ -1017,30 +1017,18 @@ python demo_scoring.py
 pytest tests/
 ```
 
-### Test Coverage
-
-- ✅ Base rank score calculation
-- ✅ Recency score calculation  
-- ✅ Final relevance score calculation
-- ✅ Document enrichment
-- ✅ Custom weight configurations
-- ✅ Custom decay periods
-- ✅ Timezone handling
-
-All tests passing: **7/7** ✅
-
 ---
 
 ## Code Quality
 
 The codebase follows Python best practices:
 
-- ✅ Type hints for all functions
-- ✅ Comprehensive error handling
-- ✅ Clear docstrings and comments
-- ✅ Modular, testable design
-- ✅ No linting errors
-- ✅ Production-ready code
+- Type hints for all functions
+- Comprehensive error handling
+- Clear docstrings and comments
+- Modular, testable design
+- No linting errors
+- Production-ready code
 
 ---
 
@@ -1053,12 +1041,6 @@ To contribute or extend this system:
 3. Write tests for new functionality
 4. Update documentation
 5. Ensure no linting errors
-
----
-
-## License
-
-MIT License - see LICENSE file for details.
 
 ---
 
@@ -1131,12 +1113,12 @@ wc -l ranking_training_data.jsonl
 
 You now have a **complete, production-ready system** that:
 
-✅ **Collects** search results from Google  
-✅ **Stores** data in Elasticsearch (local or cloud)  
-✅ **Computes** intelligent relevance scores  
-✅ **Prepares** ML-ready training data  
-✅ **Trains** ranking models  
-✅ **Deploys** to production  
+**Collects** search results from Google  
+**Stores** data in Elasticsearch (local or cloud)  
+**Computes** intelligent relevance scores  
+**Prepares** ML-ready training data  
+**Trains** ranking models  
+**Deploys** to production  
 
 **Get started now:**
 ```bash
@@ -1144,4 +1126,4 @@ python main.py "your query" --pages 5
 python prepare_ranking_data.py
 ```
 
-**Happy ranking!** 🚀
+**Happy ranking!**
